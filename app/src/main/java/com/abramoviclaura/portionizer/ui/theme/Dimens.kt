@@ -15,6 +15,12 @@ internal val spacingDimensionValues = SpacingDimensions(
     xxl = 128.dp
 )
 
+internal val cornerDimensionValues = CornerDimensions(
+    small = 8.dp,
+    medium = 16.dp,
+    large = 32.dp
+)
+
 @Immutable
 data class SpacingDimensions(
     val xxs: Dp = Dp.Unspecified,
@@ -27,8 +33,16 @@ data class SpacingDimensions(
 )
 
 @Immutable
+data class CornerDimensions(
+    val small: Dp = Dp.Unspecified,
+    val medium: Dp = Dp.Unspecified,
+    val large: Dp = Dp.Unspecified,
+)
+
+@Immutable
 data class DimensionSystem(
     val spacingDimensions: SpacingDimensions = SpacingDimensions(),
+    val cornerDimensions: CornerDimensions = CornerDimensions(),
 )
 
 val LocalDimensionSystem = staticCompositionLocalOf { DimensionSystem() }

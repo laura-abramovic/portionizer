@@ -25,7 +25,8 @@ fun PortionizerTheme(
     content: @Composable () -> Unit,
 ) {
     val dimensionSystem = DimensionSystem(
-        spacingDimensions = spacingDimensionValues
+        spacingDimensions = spacingDimensionValues,
+        cornerDimensions = cornerDimensionValues,
     )
 
     CompositionLocalProvider(

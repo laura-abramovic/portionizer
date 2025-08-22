@@ -1,15 +1,12 @@
-package com.abramoviclaura.portionizer
+package com.abramoviclaura.portionizer.ui.screens.addnewingredient
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -27,8 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import com.abramoviclaura.portionizer.R
 import com.abramoviclaura.portionizer.ui.theme.LocalDimensionSystem
 import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
+import com.abramoviclaura.portionizer.ui.utils.appScreen
 
 @Composable
 fun AddNewIngredientScreen(
@@ -40,15 +39,14 @@ fun AddNewIngredientScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .systemBarsPadding()
+            .appScreen()
             .imePadding()
             .padding(LocalDimensionSystem.current.spacingDimensions.m)
     ) {
         Text(
             text = stringResource(R.string.add_ingredient),
-            style = MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
 
         Spacer(Modifier.height(LocalDimensionSystem.current.spacingDimensions.xl))

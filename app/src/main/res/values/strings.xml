@@ -7,4 +7,11 @@
     <string name="grams_label">g</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+
+    <string name="ingredients">Ingredients</string>
+    <string name="split_portions">Split portions</string>
+    <string name="quantity_in_grams">%s g</string>
+
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>
