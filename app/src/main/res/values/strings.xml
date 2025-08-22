@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Portionizer</string>
+
+    <string name="add_ingredient">Add ingredient</string>
+    <string name="ingredient_name_label">Name</string>
+    <string name="ingredient_quantity_label">Grams</string>
+    <string name="grams_label">g</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 </resources>
