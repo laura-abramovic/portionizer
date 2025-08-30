@@ -1,10 +1,9 @@
 package com.abramoviclaura.portionizer.viewcontracts
 
-@JvmInline
-value class IngredientId(val value: String)
+import com.abramoviclaura.portionizer.entity.IngredientId
 
 data class IngredientViewState(
     val id: IngredientId,
     val name: String,
-    val quantity: Int,
+    val quantity: String,
 )

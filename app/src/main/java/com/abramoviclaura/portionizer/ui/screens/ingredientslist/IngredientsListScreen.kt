@@ -18,12 +18,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abramoviclaura.portionizer.R
+import com.abramoviclaura.portionizer.entity.IngredientId
 import com.abramoviclaura.portionizer.ui.components.AddButton
 import com.abramoviclaura.portionizer.ui.components.IngredientListItem
 import com.abramoviclaura.portionizer.ui.theme.LocalDimensionSystem
 import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
 import com.abramoviclaura.portionizer.ui.utils.appScreen
-import com.abramoviclaura.portionizer.viewcontracts.IngredientId
 import com.abramoviclaura.portionizer.viewcontracts.IngredientViewState
 import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListRouter
 import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListViewModel
@@ -39,6 +39,23 @@ fun IngredientsListScreen(
         IngredientsListViewState.initial()
     )
 
+    IngredientsListScreenRootContainer(
+        ingredientsViewState = ingredientsViewState,
+        onAddButtonClick = router::showAddIngredientScreen,
+        onSplitPortionsButtonClick = viewModel::onSplitPortionsButtonClick,
+        onEditIngredientButtonClick = viewModel::onEditIngredientButtonClick,
+        onDeleteIngredientButtonClick = viewModel::onDeleteIngredientButtonClick
+    )
+}
+
+@Composable
+private fun IngredientsListScreenRootContainer(
+    ingredientsViewState: IngredientsListViewState,
+    onAddButtonClick: () -> Unit,
+    onSplitPortionsButtonClick: () -> Unit,
+    onEditIngredientButtonClick: (IngredientId) -> Unit,
+    onDeleteIngredientButtonClick: (IngredientId) -> Unit,
+) {
     Column(
         modifier = Modifier
             .appScreen()
@@ -53,14 +70,14 @@ fun IngredientsListScreen(
         Spacer(Modifier.height(LocalDimensionSystem.current.spacingDimensions.xl))
 
         if (ingredientsViewState.ingredients.isEmpty()) {
-            IngredientListEmptyContent(onAddButtonClick = router::showAddIngredientScreen)
+            IngredientListEmptyContent(onAddButtonClick = onAddButtonClick)
         } else {
             IngredientsListContent(
                 ingredients = ingredientsViewState.ingredients,
-                onAddButtonClick = router::showAddIngredientScreen,
-                onSplitPortionsButtonClick = viewModel::onSplitPortionsButtonClick,
-                onEditClick = viewModel::onEditIngredientButtonClick,
-                onDeleteClick = viewModel::onDeleteIngredientButtonClick
+                onAddButtonClick = onAddButtonClick,
+                onSplitPortionsButtonClick = onSplitPortionsButtonClick,
+                onEditClick = onEditIngredientButtonClick,
+                onDeleteClick = onDeleteIngredientButtonClick
             )
         }
     }
@@ -80,7 +97,7 @@ private fun IngredientsListContent(
             items(ingredients) { ingredient ->
                 IngredientListItem(
                     name = ingredient.name,
-                    quantity = ingredient.quantity.toString(),
+                    quantity = ingredient.quantity,
                     onEditClick = { onEditClick(ingredient.id) },
                     onDeleteClick = { onDeleteClick(ingredient.id) }
                 )
@@ -111,20 +128,32 @@ private fun IngredientsListContent(
 @Preview
 @Composable
 private fun PreviewIngredientsListScreen() = PortionizerTheme {
-//    val ingredients = listOf(
-//        IngredientViewState("Carrot", 360),
-//        IngredientViewState("Red bell peper", 120),
-//        IngredientViewState("Olive oil", 6),
-//        IngredientViewState("Onion", 84),
-//        IngredientViewState("Rice", 80),
-//        IngredientViewState("Chicken", 500),
-//    )
+    val ingredients = listOf(
+        IngredientViewState(IngredientId(""), "Carrot", "360"),
+        IngredientViewState(IngredientId(""), "Red bell peper", "120"),
+        IngredientViewState(IngredientId(""), "Olive oil", "6"),
+        IngredientViewState(IngredientId(""), "Onion", "84"),
+        IngredientViewState(IngredientId(""), "Rice", "80"),
+        IngredientViewState(IngredientId(""), "Chicken", "500"),
+    )
 
-//    IngredientsListScreen(ingredients)
+    IngredientsListScreenRootContainer(
+        ingredientsViewState = IngredientsListViewState(ingredients),
+        onAddButtonClick = {},
+        onSplitPortionsButtonClick = {},
+        onEditIngredientButtonClick = {},
+        onDeleteIngredientButtonClick = {}
+    )
 }
 
 @Preview
 @Composable
 private fun PreviewIngredientsListEmptyScreen() = PortionizerTheme {
-//    IngredientsListScreen(emptyList())
+    IngredientsListScreenRootContainer(
+        ingredientsViewState = IngredientsListViewState(emptyList()),
+        onAddButtonClick = {},
+        onSplitPortionsButtonClick = {},
+        onEditIngredientButtonClick = {},
+        onDeleteIngredientButtonClick = {}
+    )
 }

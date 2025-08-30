@@ -1,7 +1,9 @@
 package com.abramoviclaura.portionizer
 
 import android.app.Application
-import com.abramoviclaura.portionizer.di.appModule
+import com.abramoviclaura.portionizer.di.routerModule
+import com.abramoviclaura.portionizer.di.sourceModule
+import com.abramoviclaura.portionizer.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -17,7 +19,7 @@ class PortionizerApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@PortionizerApplication)
-            modules(appModule)
+            modules(routerModule, viewModelModule, sourceModule)
         }
     }
 }

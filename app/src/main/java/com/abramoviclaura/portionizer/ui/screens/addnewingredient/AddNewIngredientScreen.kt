@@ -14,25 +14,62 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abramoviclaura.portionizer.R
 import com.abramoviclaura.portionizer.ui.theme.LocalDimensionSystem
 import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
 import com.abramoviclaura.portionizer.ui.utils.appScreen
+import com.abramoviclaura.portionizer.viewcontracts.addnewingredient.AddNewIngredientRouter
+import com.abramoviclaura.portionizer.viewcontracts.addnewingredient.AddNewIngredientViewModel
+import com.abramoviclaura.portionizer.viewcontracts.addnewingredient.AddNewIngredientViewState
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AddNewIngredientScreen() {
-    var name by remember { mutableStateOf("") }
-    var grams by remember { mutableStateOf("") }
+fun AddNewIngredientScreen(
+    router: AddNewIngredientRouter,
+    viewModel: AddNewIngredientViewModel = koinViewModel(),
+) {
+    val inputsViewState by viewModel.inputsViewState().collectAsStateWithLifecycle(AddNewIngredientViewState.Inputs.initial())
+    val addButtonViewState by viewModel.addButtonViewState().collectAsStateWithLifecycle(AddNewIngredientViewState.AddButton.initial())
+
+    AddNewIngredientScreenRootContainer(
+        inputsViewState = inputsViewState,
+        addButtonViewState = addButtonViewState,
+        onNameInputChange = viewModel::onNameInputChange,
+        onGramsInputChange = viewModel::onGramsInputChange,
+        onAddButtonClick = {
+            viewModel.onAddButtonClick()
+            router.goBack()
+        },
+        onCancelButtonClick = router::goBack
+    )
+}
+
+@Composable
+private fun AddNewIngredientScreenRootContainer(
+    inputsViewState: AddNewIngredientViewState.Inputs,
+    addButtonViewState: AddNewIngredientViewState.AddButton,
+    onNameInputChange: (String) -> Unit,
+    onGramsInputChange: (String) -> Unit,
+    onAddButtonClick: () -> Unit,
+    onCancelButtonClick: () -> Unit,
+) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Column(
         modifier = Modifier
@@ -49,28 +86,26 @@ fun AddNewIngredientScreen() {
         Spacer(Modifier.height(LocalDimensionSystem.current.spacingDimensions.xl))
 
         OutlinedTextField(
-            value = name,
-            onValueChange = {
-                name = it
-            },
+            value = inputsViewState.name,
+            onValueChange = onNameInputChange,
             label = {
                 Text(stringResource(R.string.ingredient_name_label))
             },
             maxLines = 1,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            modifier = Modifier.focusRequester(focusRequester)
         )
 
         Spacer(Modifier.height(LocalDimensionSystem.current.spacingDimensions.s))
 
         Row(verticalAlignment = Alignment.Bottom) {
             OutlinedTextField(
-                value = grams,
-                onValueChange = { value ->
-                    grams = value.filter { it.isDigit() }
-                },
+                value = inputsViewState.grams,
+                onValueChange = onGramsInputChange,
                 label = {
                     Text(stringResource(R.string.ingredient_quantity_label))
                 },
+                maxLines = 1,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done)
             )
 
@@ -85,7 +120,8 @@ fun AddNewIngredientScreen() {
         Spacer(Modifier.weight(1f))
 
         Button(
-            onClick = { /* on add click */ },
+            onClick = onAddButtonClick,
+            enabled = addButtonViewState.enabled,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
@@ -97,7 +133,7 @@ fun AddNewIngredientScreen() {
         Spacer(Modifier.height(LocalDimensionSystem.current.spacingDimensions.s))
 
         Button(
-            onClick = {  /* on cancel click */ },
+            onClick = onCancelButtonClick,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
@@ -111,5 +147,12 @@ fun AddNewIngredientScreen() {
 @Preview
 @Composable
 private fun PreviewAddNewIngredientScreen() = PortionizerTheme {
-    AddNewIngredientScreen()
+    AddNewIngredientScreenRootContainer(
+        inputsViewState = AddNewIngredientViewState.Inputs("", ""),
+        addButtonViewState = AddNewIngredientViewState.AddButton(true),
+        onNameInputChange = {},
+        onGramsInputChange = {},
+        onAddButtonClick = {},
+        onCancelButtonClick = {}
+    )
 }

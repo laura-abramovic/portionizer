@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
                     startDestination = IngredientsList
                 ) {
                     composable<IngredientsList> { IngredientsListScreen(router = koinInject(parameters = { parametersOf(navController) })) }
-                    composable<AddNewIngredient> { AddNewIngredientScreen() }
+                    composable<AddNewIngredient> { AddNewIngredientScreen(router = koinInject(parameters = { parametersOf(navController) })) }
                 }
             }
         }

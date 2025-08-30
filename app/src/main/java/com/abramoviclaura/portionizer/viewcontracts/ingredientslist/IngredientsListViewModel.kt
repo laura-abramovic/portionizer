@@ -1,17 +1,25 @@
 package com.abramoviclaura.portionizer.viewcontracts.ingredientslist
 
 import androidx.lifecycle.ViewModel
-import com.abramoviclaura.portionizer.viewcontracts.IngredientId
+import com.abramoviclaura.portionizer.entity.IngredientId
+import com.abramoviclaura.portionizer.source.IngredientsListSource
 import com.abramoviclaura.portionizer.viewcontracts.IngredientViewState
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
-class IngredientsListViewModel() : ViewModel() {
+class IngredientsListViewModel(
+    private val ingredientsListSource: IngredientsListSource,
+) : ViewModel() {
 
-    private val ingredientsPublisher = MutableStateFlow<List<IngredientViewState>>(emptyList())
-
-    fun ingredientsViewState() = ingredientsPublisher.map {
-        IngredientsListViewState(it)
+    fun ingredientsViewState() = ingredientsListSource.ingredientsList().map { ingredients ->
+        IngredientsListViewState(
+            ingredients.map {
+                IngredientViewState(
+                    id = it.id,
+                    name = it.name,
+                    quantity = it.grams.toString()
+                )
+            }
+        )
     }
 
     fun onSplitPortionsButtonClick() {
