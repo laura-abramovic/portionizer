@@ -22,12 +22,15 @@ import com.abramoviclaura.portionizer.ui.theme.LocalDimensionSystem
 import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
 import com.abramoviclaura.portionizer.ui.utils.appScreen
 import com.abramoviclaura.portionizer.viewcontracts.IngredientViewState
+import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListViewModel
+import org.koin.androidx.compose.koinViewModel
+import java.io.StringReader
 
 @Composable
 fun IngredientsListScreen(
     ingredients: List<IngredientViewState>,
+    viewModel: IngredientsListViewModel = koinViewModel()
 ) {
-
     Column(
         modifier = Modifier
             .appScreen()
