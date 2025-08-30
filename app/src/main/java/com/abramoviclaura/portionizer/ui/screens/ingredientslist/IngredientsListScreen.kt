@@ -11,26 +11,34 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.abramoviclaura.portionizer.R
 import com.abramoviclaura.portionizer.ui.components.AddButton
 import com.abramoviclaura.portionizer.ui.components.IngredientListItem
 import com.abramoviclaura.portionizer.ui.theme.LocalDimensionSystem
 import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
 import com.abramoviclaura.portionizer.ui.utils.appScreen
+import com.abramoviclaura.portionizer.viewcontracts.IngredientId
 import com.abramoviclaura.portionizer.viewcontracts.IngredientViewState
+import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListRouter
 import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListViewModel
+import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListViewState
 import org.koin.androidx.compose.koinViewModel
-import java.io.StringReader
 
 @Composable
 fun IngredientsListScreen(
-    ingredients: List<IngredientViewState>,
-    viewModel: IngredientsListViewModel = koinViewModel()
+    router: IngredientsListRouter,
+    viewModel: IngredientsListViewModel = koinViewModel(),
 ) {
+    val ingredientsViewState by viewModel.ingredientsViewState().collectAsStateWithLifecycle(
+        IngredientsListViewState.initial()
+    )
+
     Column(
         modifier = Modifier
             .appScreen()
@@ -44,13 +52,15 @@ fun IngredientsListScreen(
 
         Spacer(Modifier.height(LocalDimensionSystem.current.spacingDimensions.xl))
 
-        if (ingredients.isEmpty()) {
-            IngredientListEmptyContent({})
+        if (ingredientsViewState.ingredients.isEmpty()) {
+            IngredientListEmptyContent(onAddButtonClick = router::showAddIngredientScreen)
         } else {
             IngredientsListContent(
-                ingredients = ingredients,
-                onAddButtonClick = {},
-                onSplitPortionsButtonClick = {}
+                ingredients = ingredientsViewState.ingredients,
+                onAddButtonClick = router::showAddIngredientScreen,
+                onSplitPortionsButtonClick = viewModel::onSplitPortionsButtonClick,
+                onEditClick = viewModel::onEditIngredientButtonClick,
+                onDeleteClick = viewModel::onDeleteIngredientButtonClick
             )
         }
     }
@@ -61,6 +71,8 @@ private fun IngredientsListContent(
     ingredients: List<IngredientViewState>,
     onAddButtonClick: () -> Unit,
     onSplitPortionsButtonClick: () -> Unit,
+    onEditClick: (IngredientId) -> Unit,
+    onDeleteClick: (IngredientId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -69,8 +81,8 @@ private fun IngredientsListContent(
                 IngredientListItem(
                     name = ingredient.name,
                     quantity = ingredient.quantity.toString(),
-                    onEditClick = {},
-                    onDeleteClick = {}
+                    onEditClick = { onEditClick(ingredient.id) },
+                    onDeleteClick = { onDeleteClick(ingredient.id) }
                 )
             }
         }
@@ -99,20 +111,20 @@ private fun IngredientsListContent(
 @Preview
 @Composable
 private fun PreviewIngredientsListScreen() = PortionizerTheme {
-    val ingredients = listOf(
-        IngredientViewState("Carrot", 360),
-        IngredientViewState("Red bell peper", 120),
-        IngredientViewState("Olive oil", 6),
-        IngredientViewState("Onion", 84),
-        IngredientViewState("Rice", 80),
-        IngredientViewState("Chicken", 500),
-    )
+//    val ingredients = listOf(
+//        IngredientViewState("Carrot", 360),
+//        IngredientViewState("Red bell peper", 120),
+//        IngredientViewState("Olive oil", 6),
+//        IngredientViewState("Onion", 84),
+//        IngredientViewState("Rice", 80),
+//        IngredientViewState("Chicken", 500),
+//    )
 
-    IngredientsListScreen(ingredients)
+//    IngredientsListScreen(ingredients)
 }
 
 @Preview
 @Composable
 private fun PreviewIngredientsListEmptyScreen() = PortionizerTheme {
-    IngredientsListScreen(emptyList())
+//    IngredientsListScreen(emptyList())
 }

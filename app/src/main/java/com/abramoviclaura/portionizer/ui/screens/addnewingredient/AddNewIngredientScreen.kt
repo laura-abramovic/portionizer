@@ -30,10 +30,7 @@ import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
 import com.abramoviclaura.portionizer.ui.utils.appScreen
 
 @Composable
-fun AddNewIngredientScreen(
-    onAddClick: () -> Unit,
-    onCancelClick: () -> Unit,
-) {
+fun AddNewIngredientScreen() {
     var name by remember { mutableStateOf("") }
     var grams by remember { mutableStateOf("") }
 
@@ -88,7 +85,7 @@ fun AddNewIngredientScreen(
         Spacer(Modifier.weight(1f))
 
         Button(
-            onClick = onAddClick,
+            onClick = { /* on add click */ },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
@@ -100,7 +97,7 @@ fun AddNewIngredientScreen(
         Spacer(Modifier.height(LocalDimensionSystem.current.spacingDimensions.s))
 
         Button(
-            onClick = onCancelClick,
+            onClick = {  /* on cancel click */ },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
@@ -114,8 +111,5 @@ fun AddNewIngredientScreen(
 @Preview
 @Composable
 private fun PreviewAddNewIngredientScreen() = PortionizerTheme {
-    AddNewIngredientScreen(
-        onAddClick = {},
-        onCancelClick = {}
-    )
+    AddNewIngredientScreen()
 }

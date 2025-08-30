@@ -4,9 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.abramoviclaura.portionizer.navigation.AddNewIngredient
+import com.abramoviclaura.portionizer.navigation.IngredientsList
+import com.abramoviclaura.portionizer.ui.screens.addnewingredient.AddNewIngredientScreen
 import com.abramoviclaura.portionizer.ui.screens.ingredientslist.IngredientsListScreen
 import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
-import org.koin.androidx.compose.KoinAndroidContext
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,7 +21,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PortionizerTheme {
-                IngredientsListScreen(emptyList())
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = IngredientsList
+                ) {
+                    composable<IngredientsList> { IngredientsListScreen(router = koinInject(parameters = { parametersOf(navController) })) }
+                    composable<AddNewIngredient> { AddNewIngredientScreen() }
+                }
             }
         }
     }
