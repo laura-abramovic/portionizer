@@ -31,7 +31,7 @@ import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
 
 @Composable
 fun RatioDialogContent(
-    onSplitButtonClick: () -> Unit,
+    onSplitButtonClick: (Int, Int) -> Unit,
     onCancelButtonClick: () -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -51,7 +51,7 @@ fun RatioDialogContent(
                     firstValue = value.filter { it.isDigit() }
                 },
                 maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                 modifier = Modifier
                     .focusRequester(focusRequester)
                     .weight(1f)
@@ -69,24 +69,20 @@ fun RatioDialogContent(
                     secondValue = value.filter { it.isDigit() }
                 },
                 maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-                modifier = Modifier
-                    .focusRequester(focusRequester)
-                    .weight(1f)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                modifier = Modifier.weight(1f)
             )
         }
 
         Spacer(Modifier.height(LocalDimensionSystem.current.spacingDimensions.l))
 
         Button(
-            onClick = {
-                onSplitButtonClick()
-            },
-            enabled = firstValue.isNotBlank() && secondValue.isNotBlank(),
+            onClick = { onSplitButtonClick(firstValue.toInt(), secondValue.toInt()) },
+            enabled = firstValue.isValidRatio() && secondValue.isValidRatio(),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.add).uppercase(),
+                text = stringResource(R.string.split).uppercase(),
                 style = MaterialTheme.typography.headlineSmall
             )
         }
@@ -105,8 +101,10 @@ fun RatioDialogContent(
     }
 }
 
+private fun String.isValidRatio() = isNotBlank() && toIntOrNull() != null
+
 @Preview
 @Composable
 private fun RatioDialogContentPreview() = PortionizerTheme {
-    RatioDialogContent(onSplitButtonClick = {}, onCancelButtonClick = {})
+    RatioDialogContent(onSplitButtonClick = { _, _ -> }, onCancelButtonClick = {})
 }

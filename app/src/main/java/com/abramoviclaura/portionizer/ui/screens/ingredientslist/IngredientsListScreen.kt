@@ -21,6 +21,7 @@ import com.abramoviclaura.portionizer.R
 import com.abramoviclaura.portionizer.entity.IngredientId
 import com.abramoviclaura.portionizer.ui.components.AddButton
 import com.abramoviclaura.portionizer.ui.components.IngredientListItem
+import com.abramoviclaura.portionizer.ui.screens.RatioBottomSheet
 import com.abramoviclaura.portionizer.ui.theme.LocalDimensionSystem
 import com.abramoviclaura.portionizer.ui.theme.PortionizerTheme
 import com.abramoviclaura.portionizer.ui.utils.appScreen
@@ -28,6 +29,7 @@ import com.abramoviclaura.portionizer.viewcontracts.IngredientViewState
 import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListRouter
 import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListViewModel
 import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.IngredientsListViewState
+import com.abramoviclaura.portionizer.viewcontracts.ingredientslist.RatioBottomSheetViewState
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -35,26 +37,33 @@ fun IngredientsListScreen(
     router: IngredientsListRouter,
     viewModel: IngredientsListViewModel = koinViewModel(),
 ) {
-    val ingredientsViewState by viewModel.ingredientsViewState().collectAsStateWithLifecycle(
-        IngredientsListViewState.initial()
-    )
+    val ingredientsViewState by viewModel.ingredientsViewState().collectAsStateWithLifecycle(IngredientsListViewState.initial())
+    val ratioBottomSheetViewState by viewModel.ratioBottomSheetViewState().collectAsStateWithLifecycle(RatioBottomSheetViewState(false))
 
     IngredientsListScreenRootContainer(
         ingredientsViewState = ingredientsViewState,
+        ratioBottomSheetViewState = ratioBottomSheetViewState,
         onAddButtonClick = router::showAddIngredientScreen,
         onSplitPortionsButtonClick = viewModel::onSplitPortionsButtonClick,
         onEditIngredientButtonClick = viewModel::onEditIngredientButtonClick,
-        onDeleteIngredientButtonClick = viewModel::onDeleteIngredientButtonClick
+        onDeleteIngredientButtonClick = viewModel::onDeleteIngredientButtonClick,
+        onSplitButtonClick = viewModel::onRatioBottomSheetSplitButtonClick,
+        onCancelButtonClick = viewModel::onRatioBottomSheetDismiss,
+        onDismissRatioSheet = viewModel::onRatioBottomSheetDismiss
     )
 }
 
 @Composable
 private fun IngredientsListScreenRootContainer(
     ingredientsViewState: IngredientsListViewState,
+    ratioBottomSheetViewState: RatioBottomSheetViewState,
     onAddButtonClick: () -> Unit,
     onSplitPortionsButtonClick: () -> Unit,
     onEditIngredientButtonClick: (IngredientId) -> Unit,
     onDeleteIngredientButtonClick: (IngredientId) -> Unit,
+    onSplitButtonClick: (Int, Int) -> Unit,
+    onCancelButtonClick: () -> Unit,
+    onDismissRatioSheet: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -80,6 +89,14 @@ private fun IngredientsListScreenRootContainer(
                 onDeleteClick = onDeleteIngredientButtonClick
             )
         }
+    }
+
+    if (ratioBottomSheetViewState.visible) {
+        RatioBottomSheet(
+            onSplitButtonClick = onSplitButtonClick,
+            onCancelButtonClick = onCancelButtonClick,
+            onDismissRequest = onDismissRatioSheet
+        )
     }
 }
 
@@ -139,10 +156,14 @@ private fun PreviewIngredientsListScreen() = PortionizerTheme {
 
     IngredientsListScreenRootContainer(
         ingredientsViewState = IngredientsListViewState(ingredients),
+        ratioBottomSheetViewState = RatioBottomSheetViewState(false),
         onAddButtonClick = {},
         onSplitPortionsButtonClick = {},
         onEditIngredientButtonClick = {},
-        onDeleteIngredientButtonClick = {}
+        onDeleteIngredientButtonClick = {},
+        onSplitButtonClick = { _, _ -> },
+        onCancelButtonClick = {},
+        onDismissRatioSheet = {}
     )
 }
 
@@ -151,9 +172,13 @@ private fun PreviewIngredientsListScreen() = PortionizerTheme {
 private fun PreviewIngredientsListEmptyScreen() = PortionizerTheme {
     IngredientsListScreenRootContainer(
         ingredientsViewState = IngredientsListViewState(emptyList()),
+        ratioBottomSheetViewState = RatioBottomSheetViewState(false),
         onAddButtonClick = {},
         onSplitPortionsButtonClick = {},
         onEditIngredientButtonClick = {},
-        onDeleteIngredientButtonClick = {}
+        onDeleteIngredientButtonClick = {},
+        onSplitButtonClick = { _, _ -> },
+        onCancelButtonClick = {},
+        onDismissRatioSheet = {}
     )
 }

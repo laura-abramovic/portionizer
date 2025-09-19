@@ -28,7 +28,6 @@ fun AddButton(onClick: () -> Unit, modifier: Modifier = Modifier) =
             .clickable(onClick = onClick)
             .background(MaterialTheme.colorScheme.primary)
             .padding(LocalDimensionSystem.current.spacingDimensions.m)
-
     )
 
 @Preview

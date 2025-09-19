@@ -9,3 +9,5 @@ data class IngredientsListViewState(
         fun initial() = IngredientsListViewState(emptyList())
     }
 }
+
+data class RatioBottomSheetViewState(val visible: Boolean)
